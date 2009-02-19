@@ -72,7 +72,7 @@ class AuthForm(forms.Form):
 
     def auth_redirect(self, target, view_name, acquire=None, args=[], kwargs={}):
         trust_url = 'http://localhost'
-        return_to = 'http://localhost/openid/login'
+        return_to = 'http://localhost/openid/test'
         self.request.return_to_args['redirect'] = target
         if acquire:
             self.request.return_to_args['acquire_article'] = str(acquire.id)

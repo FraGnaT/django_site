@@ -50,7 +50,7 @@ AUTHENTICATION_BACKENDS = ('django_openidconsumer.exauth.TypedModelBackend',)
 # Make this unique, and don't share it with anybody.
 SECRET_KEY = 'j*et1j1cv(d5cnme3)2lv*94v!v_)8*2w!9!n(vd$160auoc4o'
 
-CICERO_OPENID_STORE_ROOT = '/var/www/localhost/htdocs/tst/media/openid'
+CICERO_OPENID_STORE_ROOT = '/var/www/localhost/htdocs/openid'
 
 # List of callables that know how to import templates from various sources.
 TEMPLATE_LOADERS = (
