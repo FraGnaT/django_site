@@ -94,7 +94,7 @@ def get_consumer(session):
 
 
 def auth_openid(request):
-    return render_to_response('base_simple.html', {'message':request.GET})
+    return render_to_response('.sddahtml', {'message':request.GET['openid.claimed_id']})
 
        
 def login_openid(request):
