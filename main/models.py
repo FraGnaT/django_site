@@ -71,8 +71,9 @@ class AuthForm(forms.Form):
         return self.cleaned_data['openid_url']
 
     def auth_redirect(self, target, view_name, acquire=None, args=[], kwargs={}):
+        from django.core.urlresolvers import reverse
         trust_url = 'http://localhost'
-        return_to = 'http://localhost/openid/test'
+        return_to = 'http://localhost'+reverse('tst.main.views.auth_openid')
         self.request.return_to_args['redirect'] = target
         if acquire:
             self.request.return_to_args['acquire_article'] = str(acquire.id)

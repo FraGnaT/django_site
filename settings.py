@@ -45,7 +45,6 @@ MEDIA_ROOT = '/var/www/localhost/htdocs/tst/'
 # trailing slash.
 # Examples: "http://foo.com/media/", "/media/".
 ADMIN_MEDIA_PREFIX = '/media/admin/'
-AUTHENTICATION_BACKENDS = ('django_openidconsumer.exauth.TypedModelBackend',)
 
 # Make this unique, and don't share it with anybody.
 SECRET_KEY = 'j*et1j1cv(d5cnme3)2lv*94v!v_)8*2w!9!n(vd$160auoc4o'

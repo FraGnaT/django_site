@@ -31,7 +31,6 @@ def get_consumer(session):
         raise OpenIdSetupError('CICERO_OPENID_STORE_ROOT is not set')
     return Consumer(session, FileOpenIDStore(settings.CICERO_OPENID_STORE_ROOT))
 
-
 class OpenIdSetupError(Exception):
     pass
 
