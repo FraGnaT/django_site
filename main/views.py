@@ -87,21 +87,13 @@ def render_to_redirect(request, template_name, context_dict, **kwargs):         
     return _render_to_response(template_name, context_instance=context, **kwargs)
 
 
-def auth_openid(request, session = None, query = None, return_path = None):
-    from django.utils.encoding import smart_str, smart_unicode
-    from django.contrib.sites.models import Site
-    from tst.main.openidbase import get_consumer
-    from openid.consumer.consumer import Consumer, SUCCESS, DiscoveryFailure
-    query = request.GET
-    session = request.session
-    return_path = request.path
-    query1 = dict([(k, smart_str(v)) for k, v in query.items()])
-    consumer = get_consumer(session)
-    info = consumer.complete(query1, 'http://localhost'+return_path.encode('UTF-8'))
-    if info.status != SUCCESS:
-        return render_to_response('base_simple.html', {'message': 'Ошибка авторизации %s return_to:' % (info.status)})
-    else:
-        return render_to_response('base_simple.html', {'message': 'GET : %s Инфо статус %s' % (request.GET, info.status)})
+def auth_openid(request):
+    from django.contrib.auth import authenticate, login
+    user = authenticate(session=request.session, query=request.GET, return_path=request.path)
+    if not user:
+        return HttpResponseForbidden('Ошибка авторизации')
+    login(request, user)
+    return HttpResponseRedirect(request.GET.get('redirect', '/'))
 
        
 def login_openid(request):
