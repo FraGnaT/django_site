@@ -8,21 +8,27 @@ from tst.main.models import content, site_setting, Category, Login_form, Comment
 
 
 setting = site_setting.objects.get(id=1)  # Временный файл настроек сайта Title, Description, etc.
+base = Context({'site':setting, 'Category':Category.objects.all()}) # Основной Context на передачу в шаблон
+
 def post_redirect(request):
     return request.POST.get('redirect', request.META.get('HTTP_REFERER', '/'))
 
-def main(request):
+def main(request):                        # Заглавная страница
     content_list = content.objects.filter(published = True).order_by('-date')
-    return render_to_response('base_preview.html', {'content': content_list[0:9], 'rss': True, 'site':setting, 'Category':\
-            Category.objects.all(), 'login_form': Login_form(), 'user': request.user, 'category_url': 'latest'})
+    base.update({'content':content_list[0:9], 'rss': True, 'category_url': 'latest', 'user':request.user})
+    if not request.user.is_authenticated():
+        base.update({'login_form': Login_form()})
+    return render_to_response('base_preview.html', base)
         
 
 def view_content(request, ID):
     article = content.objects.filter(id=int(ID))
     if not article:
         raise Http404
-    return render_to_response('base_content.html', {'content': article[0], 'site':setting, 'rss':True, 'Category':\
-        Category.objects.all(), 'user': request.user, 'login_form': Login_form(), 'Comment_form': Comment_form()})
+    base.update({'content':article[0]})
+    if request.user.is_authenticated():
+        base.update({'Comment_form':Comment_form()})
+    return render_to_response('base_content.html', base)
 
 def add(request, offset):                                        #Добавление комментария
     ctnt = content.objects.get(id=int(offset))
@@ -52,15 +58,17 @@ def category_views(request, category):                             #Вывод �
     content_list = content.objects.filter(category__url = category, published = True)
     if not content_list:
         raise Http404
-    return render_to_response('base_preview.html', {'content': content_list, 'site':setting, 'rss':True, 'Category':\
-            Category.objects.all(), 'login_form': Login_form(), 'user': request.user, 'category_url': category})
+    base.update({'content': content_list, 'rss':True, 'category_url': category})
+    return render_to_response('base_preview.html', base)
 
 def category_content(request, category, name):
     content_list = content.objects.filter(category__url=category, title=name, published = True)
     if not content_list:
         raise Http404
-    return render_to_response('base_content.html', {'content': content_list[0], 'site':setting, 'Category':\
-        Category.objects.all(), 'user': request.user, 'login_form': Login_form(), 'Comment_form': Comment_form()})
+    base.update({'content': content_list[0]})
+    if request.user.is_authenticated():
+        base.update({'Comment_form': Comment_form()})
+    return render_to_response('base_content.html', base)
 
 def test(request, offset):
     return render_to_response('base_preview.html', {'debug': offset})
@@ -74,8 +82,8 @@ def search_all(request):
         search_list = content.objects.filter(published = True, text__contains = request.GET['s'])
         if not search_list:
             raise Http404
-        return render_to_response('base_preview.html', {'content': search_list, 'site':setting, 'Category':\
-            Category.objects.all(), 'login_form': Login_form(), 'user': request.user})
+        base.update({'content': search_list})
+        return render_to_response('base_preview.html', base)
 #OPENID
 from openid.consumer.consumer import Consumer
 from openid.store.filestore import FileOpenIDStore
