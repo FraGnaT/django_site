@@ -13,11 +13,18 @@ base = Context({'site':setting, 'Category':Category.objects.all()}) # Основ
 def post_redirect(request):
     return request.POST.get('redirect', request.META.get('HTTP_REFERER', '/'))
 
+def authrequest(request, commentform=False):               # Добавление в Context по аутентификации
+    if request.user.is_authenticated():
+        base.update({'user': request.user})
+        if commentform:
+            base.update({'Comment_form': Comment_form()})
+    else:
+        base.update({'login_form':Login_form()})
+
 def main(request):                        # Заглавная страница
     content_list = content.objects.filter(published = True).order_by('-date')
-    base.update({'content':content_list[0:9], 'rss': True, 'category_url': 'latest', 'user':request.user})
-    if not request.user.is_authenticated():
-        base.update({'login_form': Login_form()})
+    base.update({'content':content_list[0:9], 'rss': True, 'category_url': 'latest'})
+    authrequest(request)
     return render_to_response('base_preview.html', base)
         
 
@@ -26,8 +33,7 @@ def view_content(request, ID):
     if not article:
         raise Http404
     base.update({'content':article[0]})
-    if request.user.is_authenticated():
-        base.update({'Comment_form':Comment_form()})
+    authrequest(request, True)
     return render_to_response('base_content.html', base)
 
 def add(request, offset):                                        #Добавление комментария
@@ -59,6 +65,7 @@ def category_views(request, category):                             #Вывод �
     if not content_list:
         raise Http404
     base.update({'content': content_list, 'rss':True, 'category_url': category})
+    authrequest(request)
     return render_to_response('base_preview.html', base)
 
 def category_content(request, category, name):
@@ -66,8 +73,7 @@ def category_content(request, category, name):
     if not content_list:
         raise Http404
     base.update({'content': content_list[0]})
-    if request.user.is_authenticated():
-        base.update({'Comment_form': Comment_form()})
+    authrequest(request, True)
     return render_to_response('base_content.html', base)
 
 def test(request, offset):
@@ -83,6 +89,7 @@ def search_all(request):
         if not search_list:
             raise Http404
         base.update({'content': search_list})
+        authrequest(request)
         return render_to_response('base_preview.html', base)
 #OPENID
 from openid.consumer.consumer import Consumer
