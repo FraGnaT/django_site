@@ -4,7 +4,7 @@ from django.http import *
 from django.shortcuts import render_to_response
 from django.contrib import auth
 from django.template import Context
-from tst.main.models import content, site_setting, Category, Login_form, Comment_form, Comment
+from tst.main.models import content, site_setting, Category, Comment_form, Comment
 
 
 setting = site_setting.objects.get(id=1)  # Временный файл настроек сайта Title, Description, etc.
@@ -19,7 +19,8 @@ def authrequest(request, commentform=False):               # Добавлени�
         if commentform:
             base.update({'Comment_form': Comment_form()})
     else:
-        base.update({'login_form':Login_form()})
+        from tst.main.models import AuthForm
+        base.update({'login_form':AuthForm(request.session)})
 
 def main(request):                        # Заглавная страница
     content_list = content.objects.filter(published = True).order_by('-date')
@@ -91,6 +92,15 @@ def search_all(request):
         base.update({'content': search_list})
         authrequest(request)
         return render_to_response('base_preview.html', base)
+
+def login(request):
+    if request.method == 'POST' and not request.user.is_authenticated():
+        form = AuthForm(request.session, request.POST)
+        if form.is_valid():
+            after_auth_redirect = form.auth_redirect(post_redirect(request), 'tst.main.views.auth_openid')
+            print after_auth_redirect
+            return HttpResponseRedirect(after_auth_redirect)
+
 #OPENID
 from openid.consumer.consumer import Consumer
 from openid.store.filestore import FileOpenIDStore

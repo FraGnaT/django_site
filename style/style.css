@@ -500,8 +500,8 @@ body {
 /* comment form styles */
 
 .login_form {
-    float:right;
-    padding: 4px 0 0 0;
+    float:left;
+    padding: 0 0 0 0;
 }
 .login_form input {
 	color:#fff;
@@ -524,9 +524,10 @@ body {
 	font-family: Tahoma, Arial, Helvetica, sans-serif;
 	font-size:11px;
 	border-style:none;
+    float: right;
 	padding: 0;
 	width:93px;
-	height:16px;
+	height:26px;
 	background:url(images/btn-comment.gif) no-repeat 0 0;
 	cursor:pointer;
 }

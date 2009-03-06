@@ -46,8 +46,9 @@ class site_setting(models.Model):
     url = models.CharField(max_length = 250)
 
 class Login_form(forms.Form):
-    username = forms.CharField(label = u'Имя')
-    password = forms.CharField(label = u'Пароль')
+    username = forms.CharField(label = u'Логин')
+    password = forms.CharField(label = u'Пароль', widget = forms.PasswordInput)
+    OpenID = forms.URLField(label = u'или OpenID')
 
 class Comment_form(forms.Form):
     text = forms.CharField(widget=forms.Textarea, label = u'Текст комментария')
@@ -55,20 +56,27 @@ class Comment_form(forms.Form):
 
 
 
-class AuthForm(forms.Form):
-    openid_url = forms.CharField(label='OpenID', max_length=200, required=True)
+class AuthForm(forms.Form): 
+    username = forms.CharField(label = u'Логин')
+    password = forms.CharField(label = u'Пароль', widget = forms.PasswordInput)
+    openid_url = forms.CharField(label='OpenID', max_length=200)
 
     def __init__(self, session, *args, **kwargs):
         forms.Form.__init__(self, *args, **kwargs)
         self.session = session
 
-    def clean_openid_url(self):
-        from tst.main.openidbase import create_request, OpenIdError, absolute_url
-        try:
-            self.request = create_request(self.cleaned_data['openid_url'], self.session)
-        except OpenIdError, e:
-            raise ValidationError(e)
-        return self.cleaned_data['openid_url']
+    def clean(self):
+        if self.cleaned_data['openid_url'].count('') > 1 and self.cleaned_data['username'].count('') == 1:
+            from tst.main.openidbase import create_request, OpenIdError, absolute_url
+            try:
+                self.request = create_request(self.cleaned_data['openid_url'], self.session)
+            except OpenIdError, e:
+                raise ValidationError(e)
+            return self.cleaned_data['openid_url']
+        else:
+            if self.cleaned_data['username'].count('') and self.cleaned_data['password'].count('') > 1:
+                return self.cleaned_data['username'] and self.cleaned_data['password']
+            raise ValidationError('Не верно введены данные')
 
     def auth_redirect(self, target, view_name, acquire=None, args=[], kwargs={}):
         from django.core.urlresolvers import reverse
