@@ -95,11 +95,27 @@ def search_all(request):
 
 def login(request):
     if request.method == 'POST' and not request.user.is_authenticated():
+        from tst.main.models import AuthForm
         form = AuthForm(request.session, request.POST)
         if form.is_valid():
-            after_auth_redirect = form.auth_redirect(post_redirect(request), 'tst.main.views.auth_openid')
-            print after_auth_redirect
-            return HttpResponseRedirect(after_auth_redirect)
+            if form.data['openid_url'].count('') > 1:
+                after_auth_redirect = form.auth_redirect(post_redirect(request), 'tst.main.views.auth_openid')
+                print after_auth_redirect
+                return HttpResponseRedirect(after_auth_redirect)
+            else:
+                from django.contrib.auth import authenticate, login
+                user = authenticate(username = form.data['username'], password = form.data['password'])
+                if not user:
+                    return HttpResponseForbidden('Ошибка авторизации')
+                if user is not None:
+                    login(request, user)
+                return render_to_response('base_simple.html', {'message': form.data['username']})
+                #return HttpResponseRedirect('http://localhost')
+        else:
+            base.update({'message': form})
+            render_to_response('base_simple.html', base)
+        redirect = post_redirect(request)
+        return render_to_redirect(request, 'base_simple.html', {'form': form, 'redirect': redirect, 'message': request.session.values()})
 
 #OPENID
 from openid.consumer.consumer import Consumer
