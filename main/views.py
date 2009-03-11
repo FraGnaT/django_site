@@ -101,7 +101,7 @@ def login(request):
             if form.data['openid_url'].count('') > 1:
                 after_auth_redirect = form.auth_redirect(post_redirect(request), 'tst.main.views.auth_openid')
                 print after_auth_redirect
-                return HttpResponseRedirect(after_auth_redirect)
+                return HttpResponseRedirect('http://localhost')
             else:
                 from django.contrib.auth import authenticate, login
                 user = authenticate(username = form.data['username'], password = form.data['password'])
@@ -113,6 +113,8 @@ def login(request):
         else:
             base.update({'message': form})
             render_to_response('base_simple.html', base)
+        if not form.is_valid():
+            return render_to_response('base_simple.html', {'message': form.data['username'].count('')})
 
 #OPENID
 from openid.consumer.consumer import Consumer
