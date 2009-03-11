@@ -66,7 +66,7 @@ class AuthForm(forms.Form):
         self.session = session
 
     def clean(self):
-        if self.data['openid_url'].count('') > 1 and not self.data['username'].count('') == 1:
+        if self.data['openid_url'].count('') > 1 and self.data['username'].count('') == 1:
             from tst.main.openidbase import create_request, OpenIdError, absolute_url
             try:
                 self.request = create_request(self.cleaned_data['openid_url'], self.session)
