@@ -48,7 +48,7 @@ class site_setting(models.Model):
 class Login_form(forms.Form):
     username = forms.CharField(label = u'Логин')
     password = forms.CharField(label = u'Пароль', widget = forms.PasswordInput)
-    OpenID = forms.URLField(label = u'или OpenID')
+    OpenID = forms.CharField(label = u'или OpenID')
 
 class Comment_form(forms.Form):
     text = forms.CharField(widget=forms.Textarea, label = u'Текст комментария')

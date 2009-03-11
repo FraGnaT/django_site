@@ -109,13 +109,10 @@ def login(request):
                     return HttpResponseForbidden('Ошибка авторизации')
                 if user is not None:
                     login(request, user)
-                return render_to_response('base_simple.html', {'message': form.data['username']})
-                #return HttpResponseRedirect('http://localhost')
+                return HttpResponseRedirect('http://localhost')
         else:
             base.update({'message': form})
             render_to_response('base_simple.html', base)
-        redirect = post_redirect(request)
-        return render_to_redirect(request, 'base_simple.html', {'form': form, 'redirect': redirect, 'message': request.session.values()})
 
 #OPENID
 from openid.consumer.consumer import Consumer
