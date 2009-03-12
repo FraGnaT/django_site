@@ -6,7 +6,7 @@ from tst.main.models import content, site_setting, tags, Category, Comment
 
 class NewsAdmin(admin.ModelAdmin):
     fieldsets = (
-    ('Контент',{'fields': ('title', 'text')}),
+    ('Контент',{'fields': ('title', 'preview', 'text')}),
     ('Теги',{'fields': ('tags', 'description', 'category', 'published')}),)
     list_display = ('id', 'title', 'description', 'date', 'category', 'published')
     list_filter = ('id', 'date', 'category', 'tags')

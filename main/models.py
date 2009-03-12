@@ -27,6 +27,7 @@ class Comment(models.Model):
 
 class content(models.Model):
     title = models.CharField(max_length=30, verbose_name = u'Заголовок')
+    preview = models.TextField(unique = True, verbose_name = u'Превью', blank = True)
     text = models.TextField(unique = True, verbose_name = u'Текст')
     tags = models.ManyToManyField('tags', verbose_name = u'Теги')
     description = models.CharField(blank=True, max_length=250, verbose_name = u'Тег описания записи')
