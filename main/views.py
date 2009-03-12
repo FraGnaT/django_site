@@ -114,17 +114,6 @@ def login(request):
             base.update({'message': form})
             render_to_response('base_simple.html', base)
 
-#OPENID
-from openid.consumer.consumer import Consumer
-from openid.store.filestore import FileOpenIDStore
-from django.conf import settings
-def render_to_redirect(request, template_name, context_dict, **kwargs):          #Temp для редиректа
-    from django.template import RequestContext
-    from django.shortcuts import render_to_response as _render_to_response
-    context = RequestContext(request, context_dict)
-    return _render_to_response(template_name, context_instance=context, **kwargs)
-
-
 def auth_openid(request):
     from django.contrib.auth import authenticate, login
     user = authenticate(session=request.session, query=request.GET, return_path=request.path)
@@ -132,19 +121,3 @@ def auth_openid(request):
         return HttpResponseForbidden('Ошибка авторизации')
     login(request, user)
     return HttpResponseRedirect(request.GET.get('redirect', '/'))
-
-       
-def login_openid(request):
-    from tst.main.models import AuthForm
-    if request.method == 'POST':
-        form = AuthForm(request.session, request.POST)
-        if form.is_valid():
-            after_auth_redirect = form.auth_redirect(post_redirect(request), 'tst.main.views.auth_openid')
-            print after_auth_redirect
-            return HttpResponseRedirect(after_auth_redirect)
-        redirect = post_redirect(request)
-    else:
-        request.session['idvalue']=123
-        form = AuthForm(request.session)
-        redirect = request.GET.get('redirect', '/')
-    return render_to_redirect(request, 'base_simple.html', {'form': form, 'redirect': redirect, 'message': request.session.values()})

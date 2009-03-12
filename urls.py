@@ -24,8 +24,6 @@ urlpatterns = patterns("",
     (r'^admin/(.*)', admin.site.root),
     (r'^commentdel/(?P<ID>[\d]+)$', 'tst.main.views.del_comment'),
     (r"^id([\d]+)/add$", "tst.main.views.add"),
-    (r'^openid/login$', 'tst.main.views.login_openid'),
-    (r'^openid/test$', 'tst.main.views.auth_openid'),
     (r'^feeds/(?P<url>.*)/$', 'django.contrib.syndication.views.feed',
         {'feed_dict': feeds}),
 )
