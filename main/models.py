@@ -81,8 +81,8 @@ class AuthForm(forms.Form):
 
     def auth_redirect(self, target, view_name, acquire=None, args=[], kwargs={}):
         from django.core.urlresolvers import reverse
-        trust_url = 'http://localhost'
-        return_to = 'http://localhost'+reverse('tst.main.views.auth_openid')
+        trust_url = 'http://'+view_name
+        return_to = 'http://'+view_name+reverse('tst.main.views.auth_openid')
         self.request.return_to_args['redirect'] = target
         if acquire:
             self.request.return_to_args['acquire_article'] = str(acquire.id)

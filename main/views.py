@@ -99,7 +99,7 @@ def login(request):
         form = AuthForm(request.session, request.POST)
         if form.is_valid():
             if form.data['openid_url'].count('') > 1:
-                after_auth_redirect = form.auth_redirect(post_redirect(request), 'tst.main.views.login')
+                after_auth_redirect = form.auth_redirect(post_redirect(request), request.META['HTTP_HOST'])
                 print after_auth_redirect
                 return HttpResponseRedirect(after_auth_redirect)
             else:
