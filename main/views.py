@@ -78,7 +78,7 @@ def category_content(request, category, name):
     return render_to_response('base_content.html', base)
 
 def test(request, offset):
-    return render_to_response('base_preview.html', {'debug': offset})
+    return render_to_response('base_preview', {'debug': offset})
 
 def search_all(request):
     if not request.GET:             #Обычный заход на страницу = 404
@@ -109,10 +109,16 @@ def login(request):
                     return HttpResponseForbidden('Ошибка авторизации')
                 if user is not None:
                     login(request, user)
-                return HttpResponseRedirect('http://localhost')
+                return HttpResponseRedirect(request.META['HTTP_REFERER'])
         else:
             base.update({'message': form})
             render_to_response('base_simple.html', base)
+
+def logout(request):
+    from django.contrib.auth import logout
+    logout(request)
+    request.session.flush()
+    return HttpResponseRedirect(request.META['HTTP_REFERER'])
 
 def auth_openid(request):
     from django.contrib.auth import authenticate, login
@@ -121,3 +127,11 @@ def auth_openid(request):
         return HttpResponseForbidden('Ошибка авторизации')
     login(request, user)
     return HttpResponseRedirect(request.GET.get('redirect', '/'))
+
+def profile(request, username):
+    from django.contrib.auth.models import User
+    authrequest(request)
+    UserRequest = User.objects.get(username=username)
+    CommentCount = Comment.objects.filter(user=UserRequest).count()
+    base.update({'UserRequest': UserRequest, 'CommentCount': CommentCount})
+    return render_to_response('base_profile.html', base)
