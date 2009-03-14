@@ -122,7 +122,7 @@ def logout(request):
 
 def auth_openid(request):
     from django.contrib.auth import authenticate, login
-    user = authenticate(session=request.session, query=request.GET, return_path=request.path)
+    user = authenticate(session=request.session, query=request.GET, return_path='http://'+request.META['HTTP_HOST']+request.path)
     if not user:
         return HttpResponseForbidden('Ошибка авторизации')
     login(request, user)
