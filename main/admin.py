@@ -33,3 +33,7 @@ class comment(admin.ModelAdmin):
     ('none', {'fields': ('user', 'text')}),)
     list_display = ('user', 'text', 'date')
 admin.site.register(Comment, comment)
+
+class Tags(admin.ModelAdmin):
+    fields = ('tag',)
+admin.site.register(tags, Tags)

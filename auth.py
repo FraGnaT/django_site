@@ -14,7 +14,7 @@ class OpenidBackend(object):
     def authenticate(self, query=None, session=None, return_path=None):
         query = dict([(k, smart_str(v)) for k, v in query.items()])
         consumer = get_consumer(session)
-        info = consumer.complete(query, 'http://localhost'+return_path.encode('UTF-8'))
+        info = consumer.complete(query, return_path.encode('UTF-8'))
         if info.status != SUCCESS:
             return None
         try:

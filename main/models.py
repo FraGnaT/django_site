@@ -80,9 +80,8 @@ class AuthForm(forms.Form):
             raise forms.ValidationError('Не верно введены данные')
 
     def auth_redirect(self, target, view_name, acquire=None, args=[], kwargs={}):
-        from django.core.urlresolvers import reverse
         trust_url = 'http://'+view_name
-        return_to = 'http://'+view_name+reverse('tst.main.views.auth_openid')
+        return_to = 'http://'+view_name+'/loginopenid'
         self.request.return_to_args['redirect'] = target
         if acquire:
             self.request.return_to_args['acquire_article'] = str(acquire.id)
